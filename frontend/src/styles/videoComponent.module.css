@@ -1,0 +1,240 @@
+/* MAIN VIDEO CONTAINER */
+
+.meetVideoContainer {
+  position: relative;
+  height: 100vh;
+  width: 100%;
+  background: #121212;
+  overflow: hidden;
+}
+
+/* SELF VIDEO PREVIEW (bottom left small camera) */
+
+.meetUserVideo{
+  position:fixed;
+  bottom:120px;     /* stay above control bar */
+  left:20px;
+  width:18vw;
+  max-width:260px;
+  min-width:150px;
+  border-radius:10px;
+  border:2px solid white;
+}
+
+/* CONTROL BUTTONS */
+
+.buttonContainers {
+  position: fixed;
+  bottom: 40px; /* keeps distance from bottom */
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  padding: 12px 22px;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(10px);
+  border-radius: 40px;
+  z-index: 10;
+}
+
+.buttonContainers svg {
+  font-size: 2.2rem;
+  cursor: pointer;
+}
+.buttonContainers button {
+  color: white;
+  transition: transform 0.2s;
+}
+
+.buttonContainers button:hover {
+  transform: scale(1.15);
+}
+
+@media (max-height:700px){
+
+.buttonContainers{
+  bottom:60px;   /* move controls higher when screen small */
+}
+
+}
+/* PARTICIPANT VIDEO GRID */
+
+.conferenceView {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  height: 80vh;
+}
+
+.conferenceView video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+/* CHAT PANEL */
+
+.chatRoom {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  height: 90vh;
+  width: 320px;
+  max-width: 90vw;
+  background: white;
+  border-radius: 10px;
+  padding: 15px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* CHAT CONTAINER */
+
+.chatContainer {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+/* MESSAGE LIST */
+
+.chattingDisplay {
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 5px;
+}
+
+/* MESSAGE BLOCK */
+
+.messageBlock {
+  margin-bottom: 12px;
+}
+
+/* SENDER NAME */
+
+.senderName {
+  font-size: 13px;
+  font-weight: bold;
+}
+
+/* MESSAGE BUBBLE */
+
+.messageText {
+  background: #f1f1f1;
+  padding: 8px 12px;
+  border-radius: 8px;
+  margin-top: 3px;
+  width: fit-content;
+  max-width: 80%;
+}
+
+/* CHAT INPUT */
+
+.chatInputContainer {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.chatInput {
+  flex: 1;
+}
+
+.sendButton {
+  height: 40px;
+}
+
+/* ============================= */
+/* LOBBY SCREEN */
+/* ============================= */
+
+/* Make the page itself not scrollable */
+html,
+body {
+  height: 100%;
+  overflow: hidden;
+}
+
+.lobbyContainer {
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #f6f8fb;
+  overflow: hidden;
+}
+
+.lobbyBox {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  width: 90%;
+  max-width: 600px;
+  /* KEY FIX: constrain the box to the full viewport height */
+  height: 100vh;
+  max-height: 100vh;
+  padding: 20px 0;
+  box-sizing: border-box;
+}
+
+.lobbyBox h2 {
+  margin: 0;
+  flex-shrink: 0; /* prevent shrinking */
+}
+
+.lobbyControls {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  flex-shrink: 0; /* prevent shrinking */
+}
+
+/* CAMERA AREA — KEY FIX */
+.videoPreview {
+  width: 100%;
+  flex: 1; /* stretch to fill all remaining vertical space */
+  min-height: 0; /* critical: allows flex child to shrink below content size */
+  background: black;
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.lobbyVideo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+/* ============================= */
+/* RESPONSIVE */
+/* ============================= */
+
+@media (max-width: 768px) {
+  .chatRoom {
+    width: 100%;
+    right: 0;
+    border-radius: 0;
+  }
+
+  .meetUserVideo {
+    width: 35vw;
+  }
+
+  .buttonContainers svg {
+    font-size: 2rem;
+  }
+
+  .videoPreview {
+    width: 90%;
+    height: 240px;
+  }
+}
