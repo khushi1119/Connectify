@@ -3,6 +3,7 @@ import { Server } from "socket.io";
 let connections = {};
 let messages = {};
 let timeOnline = {};
+let usernames = {};
 
 export const connectToSocket = (server) => {
   const io = new Server(server, {
@@ -18,6 +19,7 @@ export const connectToSocket = (server) => {
     console.log("User connected:", socket.id);
 
     socket.on("join-call", (path) => {
+      socket.roomPath = path; // Store room info on socket
       if (!connections[path]) {
         connections[path] = [];
       }
@@ -26,6 +28,13 @@ export const connectToSocket = (server) => {
       timeOnline[socket.id] = new Date();
 
       const clients = connections[path];
+
+      // Send the current list of names in this room to the NEW joiner
+      const currentNames = {};
+      clients.forEach(id => {
+        if (usernames[id]) currentNames[id] = usernames[id];
+      });
+      socket.emit("user-metadata-sync", currentNames);
 
       clients.forEach((id) => {
         io.to(id).emit("user-joined", socket.id, clients);
@@ -43,22 +52,47 @@ export const connectToSocket = (server) => {
       }
     });
 
+    socket.on("user-metadata", (name) => {
+      socket.username = name;
+      usernames[socket.id] = name; // Track globally for room syncing
+      const roomKey = socket.roomPath;
+      if (roomKey && connections[roomKey]) {
+        connections[roomKey].forEach(id => {
+          io.to(id).emit("user-metadata", socket.id, name);
+        });
+      }
+    });
+
+    socket.on("reaction", (emoji) => {
+      const roomKey = socket.roomPath;
+      if (roomKey && connections[roomKey]) {
+        connections[roomKey].forEach(id => {
+          if (id !== socket.id) {
+            io.to(id).emit("reaction", socket.id, emoji);
+          }
+        });
+      }
+    });
+
+    socket.on("screen-sharing", (isSharing) => {
+      const roomKey = socket.roomPath;
+      if (roomKey && connections[roomKey]) {
+        connections[roomKey].forEach(id => {
+          if (id !== socket.id) {
+            io.to(id).emit("screen-sharing", socket.id, isSharing);
+          }
+        });
+      }
+    });
+
     socket.on("signal", (toId, message) => {
       io.to(toId).emit("signal", socket.id, message);
     });
 
     socket.on("chat-message", (data, sender) => {
-      const [roomKey, found] = Object.entries(connections).reduce(
-        ([room, isFound], [key, value]) => {
-          if (!isFound && value.includes(socket.id)) {
-            return [key, true];
-          }
-          return [room, isFound];
-        },
-        ["", false],
-      );
+      const roomKey = socket.roomPath;
 
-      if (found) {
+      if (roomKey && connections[roomKey]) {
         if (!messages[roomKey]) {
           messages[roomKey] = [];
         }
@@ -94,6 +128,7 @@ export const connectToSocket = (server) => {
       }
 
       delete timeOnline[socket.id];
+      delete usernames[socket.id];
     });
   });
 

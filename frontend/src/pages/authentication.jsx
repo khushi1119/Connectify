@@ -1,198 +1,166 @@
-import * as React from "react";
-import {
-  Box,
-  TextField,
-  Button,
-  Paper,
-  Avatar,
-  Link,
-  Snackbar,
-} from "@mui/material";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import Alert from "@mui/material/Alert";
+import React from "react";
+import EmailIcon from '@mui/icons-material/Email';
+import LockIcon from '@mui/icons-material/Lock';
+import PersonIcon from '@mui/icons-material/Person';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import VideocamIcon from '@mui/icons-material/Videocam';
 import { AuthContext } from "../contents/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
+
 export default function Authentication() {
+  const [searchParams] = useSearchParams();
   const [username, setUsername] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [name, setName] = React.useState("");
-
   const [error, setError] = React.useState("");
   const [message, setMessage] = React.useState("");
-
-  const [formState, setFormState] = React.useState(0);
-  const [open, setOpen] = React.useState(false);
-
+  const [formState, setFormState] = React.useState(0); // 0: login, 1: register
+  
   const { handleRegister, handleLogin } = React.useContext(AuthContext);
   const navigate = useNavigate();
-  const handleClose = (event, reason) => {
-    if (reason === "clickaway") return;
 
-    setOpen(false);
-    setError("");
-    setMessage("");
-  };
+  // Sync formState with URL parameters if they change
+  React.useEffect(() => {
+    const mode = searchParams.get("mode");
+    if (mode === "register") setFormState(1);
+    else if (mode === "login") setFormState(0);
+  }, [searchParams]);
 
-  const handleAuth = async () => {
+  const handleAuth = async (e) => {
+    e.preventDefault();
     setError("");
     setMessage("");
 
     try {
       if (formState === 0) {
-        const result = await handleLogin(username, password);
-        setMessage(result?.message || "Login Successful");
+        await handleLogin(username, password);
         navigate("/home");
       } else {
-        const result = await handleRegister(name, username, password);
-        setMessage(result.message || result);
+        await handleRegister(name, username, password);
+        navigate("/home");
       }
-      //reset the field
-      setUsername("");
-      setPassword("");
-      setName("");
-
-      // switch to login after register
-      if (formState === 1) {
-        setFormState(0);
-      }
-
-      setOpen(true);
     } catch (err) {
-      const message = err?.response?.data?.message || "Something went wrong";
-      setError(message);
-      setOpen(true);
+      setError(err?.response?.data?.message || "An error occurred");
+      setMessage("");
     }
   };
+
+
   return (
-    <Box sx={{ display: "flex", height: "100vh", width: "100%" }}>
-      {/* LEFT IMAGE */}
+    <div className="flex min-h-screen items-center justify-center bg-[#0b0e14] px-4 py-12 relative overflow-hidden font-['Outfit','Inter',sans-serif]">
+      {/* Background blobs for aesthetics */}
+      <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-blue-600/10 blur-[120px] rounded-full animate-pulse"></div>
+      <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-indigo-600/10 blur-[120px] rounded-full animate-pulse" style={{ animationDelay: '2s' }}></div>
 
-      <Box
-        sx={{
-          width: "65%",
-          display: { xs: "none", sm: "block" },
-        }}
-      >
-        <Box
-          component="img"
-          src="/login.png"
-          alt="Login"
-          sx={{
-            width: "100%",
-            height: "100vh",
-            objectFit: "cover",
-            display: "block",
-          }}
-        />
-      </Box>
+      <div className="absolute top-8 left-8 flex items-center gap-2 group cursor-pointer" onClick={() => navigate("/")}>
+        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600 shadow-lg shadow-blue-600/20 group-hover:scale-110 transition-transform">
+          <VideocamIcon className="text-white" />
+        </div>
+        <span className="text-xl font-bold tracking-tight text-white">Connectify</span>
+      </div>
 
-      {/* RIGHT FORM */}
+      <div className="z-10 w-full max-w-md space-y-8 rounded-[2.5rem] border border-white/10 bg-white/5 p-10 shadow-2xl backdrop-blur-2xl ring-1 ring-white/10 transition-all duration-500 hover:ring-white/20 relative animate-fade-in">
+        <div className="text-center">
+          <div className="mb-8 flex justify-center">
+            <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-600 shadow-xl shadow-blue-600/40 animate-float-premium">
+              <VideocamIcon className="text-white" fontSize="large" />
+            </div>
+          </div>
+          <h2 className="text-4xl font-extrabold tracking-tight text-white mb-2">
+            {formState === 0 ? "Welcome Back" : "Start Journey"}
+          </h2>
+          <p className="text-sm text-gray-400 font-medium">
+            {formState === 0 ? "Sign in to catch up with your circles" : "Join the future of secure communication"}
+          </p>
+        </div>
 
-      <Paper
-        elevation={3}
-        square
-        sx={{
-          width: { xs: "100%", sm: "35%" },
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          px: 4,
-        }}
-      >
-        <Box sx={{ width: "100%", maxWidth: 400 }}>
-          {/* HEADER */}
-
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              mb: 3,
-            }}
-          >
-            <Avatar sx={{ bgcolor: "secondary.main", mb: 2 }}>
-              <LockOutlinedIcon />
-            </Avatar>
-
-            <Box>
-              <Button
-                variant={formState === 0 ? "contained" : "outlined"}
-                onClick={() => setFormState(0)}
-              >
-                Sign In
-              </Button>
-
-              <Button
-                sx={{ ml: 1 }}
-                variant={formState === 1 ? "contained" : "outlined"}
-                onClick={() => setFormState(1)}
-              >
-                Sign Up
-              </Button>
-            </Box>
-          </Box>
-
-          {/* NAME FIELD */}
-
+        <form className="mt-10 space-y-5" onSubmit={handleAuth}>
           {formState === 1 && (
-            <TextField
-              fullWidth
-              label="Full Name"
-              margin="normal"
-              value={name}
-              type="text"
-              onChange={(e) => setName(e.target.value)}
-            />
+            <div className="relative group">
+              <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-gray-500 group-focus-within:text-blue-500 transition-colors">
+                <PersonIcon fontSize="small" />
+              </div>
+              <input
+                type="text"
+                className="block w-full rounded-2xl border-0 bg-white/5 py-4 pl-12 pr-4 text-white ring-1 ring-inset ring-white/10 placeholder:text-gray-500 focus:ring-2 focus:ring-inset focus:ring-blue-500 transition-all sm:text-sm outline-none"
+                placeholder="How should we call you?"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+              />
+            </div>
           )}
 
-          {/* USERNAME */}
+          <div className="relative group">
+            <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-gray-500 group-focus-within:text-blue-500 transition-colors">
+              <PersonIcon fontSize="small" />
+            </div>
+            <input
+              type="text"
+              className="block w-full rounded-2xl border-0 bg-white/5 py-4 pl-12 pr-4 text-white ring-1 ring-inset ring-white/10 placeholder:text-gray-500 focus:ring-2 focus:ring-inset focus:ring-blue-500 transition-all sm:text-sm outline-none"
+              placeholder="Username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+            />
+          </div>
 
-          <TextField
-            fullWidth
-            label="Username"
-            margin="normal"
-            value={username}
-            type="text"
-            onChange={(e) => setUsername(e.target.value)}
-          />
+          <div className="relative group">
+            <div className="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none text-gray-500 group-focus-within:text-blue-500 transition-colors">
+              <LockIcon fontSize="small" />
+            </div>
+            <input
+              type="password"
+              className="block w-full rounded-2xl border-0 bg-white/5 py-4 pl-12 pr-4 text-white ring-1 ring-inset ring-white/10 placeholder:text-gray-500 focus:ring-2 focus:ring-inset focus:ring-blue-500 transition-all sm:text-sm outline-none"
+              placeholder="Top Secret Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </div>
 
-          {/* PASSWORD */}
+          {error && <p className="text-center text-xs font-bold text-red-400 bg-red-400/10 py-3 rounded-xl border border-red-400/20">{error}</p>}
+          {message && <p className="text-center text-xs font-bold text-green-400 bg-green-400/10 py-3 rounded-xl border border-green-400/20">{message}</p>}
 
-          <TextField
-            fullWidth
-            label="Password"
-            margin="normal"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-
-          {error && <p style={{ color: "red", marginTop: "5px" }}>{error}</p>}
-          {/* SUBMIT BUTTON */}
-
-          <Button
-            fullWidth
-            variant="contained"
-            sx={{ mt: 2, mb: 2 }}
-            onClick={handleAuth}
+          <button
+            type="submit"
+            className="group relative flex w-full justify-center rounded-2xl bg-blue-600 py-4 text-base font-bold text-white shadow-xl shadow-blue-600/30 transition-all hover:bg-blue-500 hover:scale-[1.02] active:scale-95 focus:outline-none"
           >
-            {formState === 0 ? "Login" : "Register"}
-          </Button>
+            {formState === 0 ? "Unlock Account" : "Get Started"}
+            <ArrowForwardIcon className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" fontSize="small" />
+          </button>
+        </form>
 
-          {/* LINKS */}
+        <p className="text-center text-sm text-gray-400">
+          {formState === 0 ? "New to Connectify?" : "Already found us?"}{" "}
+          <button
+            onClick={() => setFormState(formState === 0 ? 1 : 0)}
+            className="font-bold text-blue-500 hover:text-blue-400 transition-colors"
+          >
+            {formState === 0 ? "Create an account" : "Sign in here"}
+          </button>
+        </p>
 
-          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            <Link href="#">Forgot password?</Link>
-            <Link href="#">Sign up</Link>
-          </Box>
-        </Box>
-      </Paper>
+        <div className="pt-2 text-center border-t border-white/5 mt-4">
+           <button onClick={() => navigate("/")} className="text-[11px] font-bold text-gray-500 hover:text-white transition-colors uppercase tracking-widest flex items-center justify-center gap-2 mx-auto mt-4">
+              <ArrowForwardIcon sx={{ fontSize: 12, transform: 'rotate(180deg)' }} />
+              Return to Landing
+           </button>
+        </div>
+      </div>
 
-      {/* SNACKBAR */}
-
-      <Snackbar open={open} autoHideDuration={4000} onClose={handleClose}>
-        <Alert severity={error ? "error" : "success"}>{error || message}</Alert>
-      </Snackbar>
-    </Box>
+      <style>{`
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes floatPremium {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-10px); }
+        }
+        .animate-fade-in { animation: fadeIn 0.8s ease-out; }
+        .animate-float-premium { animation: floatPremium 4s ease-in-out infinite; }
+      `}</style>
+    </div>
   );
 }

@@ -1,80 +1,84 @@
-import axios, { HttpStatusCode } from "axios";
-import { createContext, useState } from "react";
+import axios from "axios";
+import { createContext, useState, useCallback } from "react";
 
 export const AuthContext = createContext();
 
 const client = axios.create({
-  baseURL: "http://localhost:8000/api/v1/users",
+  baseURL: `${process.env.REACT_APP_API_URL || "http://127.0.0.1:8000"}/api/v1/users`,
 });
+
+// Add a request interceptor to attach the JWT token
+client.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
 
 export const AuthProvider = ({ children }) => {
   const [userData, setUserData] = useState(null);
 
-  const handleRegister = async (name, username, password) => {
+  const handleRegister = useCallback(async (name, username, password) => {
     try {
-      const request = await client.post("/register", {
-        name,
-        username,
-        password,
-      });
-
-      return request.data;
+      const response = await client.post("/register", { name, username, password });
+      if (response.data.token) {
+        localStorage.setItem("token", response.data.token);
+      }
+      return response.data;
     } catch (err) {
       throw err;
     }
-  };
+  }, []);
 
-  const handleLogin = async (username, password) => {
+  const handleLogin = useCallback(async (username, password) => {
     try {
-      const request = await client.post("/login", {
-        username,
-        password,
-      });
-
-      console.log("FULL LOGIN RESPONSE:", request);
-
-      localStorage.setItem("token", request.data.token);
-
-      return request.data;
-    } catch (err) {
-      console.log("LOGIN ERROR:", err);
-      throw err;
-    }
-  };
-
-  const getHistoryOfUser = async () => {
-    try {
-      let request = await client.get("/get_all_activity", {
-        params: {
-          token: localStorage.getItem("token"),
-        },
-      });
-
-      console.log("History Response:", request.data);
-
-      return request.data; 
+      const response = await client.post("/login", { username, password });
+      if (response.data.token) {
+        localStorage.setItem("token", response.data.token);
+      }
+      return response.data;
     } catch (err) {
       throw err;
     }
-  };
+  }, []);
 
-  const addToUserHistory = async (meetingCode) => {
+  const getHistoryOfUser = useCallback(async () => {
     try {
-      let request = await client.post("/add_to_activity", {
-        token: localStorage.getItem("token"),
-        meeting_code: meetingCode,
-      });
-      return request;
+      const response = await client.get("/get_all_activity");
+      return response.data; 
+    } catch (err) {
+      throw err;
+    }
+  }, []);
+
+  const addToUserHistory = useCallback(async (meetingCode) => {
+    try {
+      const response = await client.post("/add_to_activity", { meetingCode });
+      return response.data;
     } catch (e) {
       throw e;
     }
-  };
+  }, []);
+
+  const clearHistoryOfUser = useCallback(async () => {
+    try {
+      const response = await client.post("/clear_activity");
+      return response.data;
+    } catch (err) {
+      throw err;
+    }
+  }, []);
 
   const data = {
     userData,
     setUserData,
     addToUserHistory,
     getHistoryOfUser,
+    clearHistoryOfUser,
     handleRegister,
     handleLogin,
   };

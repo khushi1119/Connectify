@@ -10,7 +10,16 @@ const withAuth = (WrappedComponent) => {
     };
 
     useEffect(() => {
-      if (!isAuthenticated()) {
+      const urlParams = new URLSearchParams(window.location.search);
+      const queryToken = urlParams.get("token");
+      
+      if (queryToken) {
+        localStorage.setItem("token", queryToken);
+        // Clear the token from the URL for security and cleanliness
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }
+
+      if (!localStorage.getItem("token")) {
         navigate("/auth");
       }
     }, [navigate]);
