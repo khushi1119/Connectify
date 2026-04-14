@@ -1,10 +1,10 @@
 import axios from "axios";
 import { createContext, useState, useCallback } from "react";
-
+import server from "../environment";
 export const AuthContext = createContext();
 
 const client = axios.create({
-  baseURL: `${process.env.REACT_APP_API_URL || "http://127.0.0.1:8000"}/api/v1/users`,
+  baseURL: `${server}/api/v1/users`,
 });
 
 // Add a request interceptor to attach the JWT token

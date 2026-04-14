@@ -20,8 +20,9 @@ import KeyboardIcon from '@mui/icons-material/Keyboard';
 import PersonIcon from '@mui/icons-material/Person';
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../contents/AuthContext";
+import server from "../environment";
 
-const server_url = process.env.REACT_APP_API_URL || "http://127.0.0.1:8000";
+const server_url = server;
 
 const peerConfigConnections = {
   iceServers: [{ urls: "stun:stun.l.google.com:19302" }],
