@@ -12,38 +12,89 @@ dotenv.config();
 
 const app = express();
 const server = createServer(app);
-const io = connectToSocket(server);
+
+connectToSocket(server);
 
 app.set("port", process.env.PORT || 8000);
 
-app.use(cors());
-app.use(express.json({ limit: "40kb" }));
-app.use(express.urlencoded({ limit: "40kb", extended: true }));
+// Required when deployed on Render
+app.set("trust proxy", 1);
 
-// SESSIONS & PASSPORT
-app.use(session({
-  secret: process.env.JWT_SECRET || 'secret',
-  resave: false,
-  saveUninitialized: false
-}));
+// -------------------- CORS -------------------- //
+
+const corsOptions = {
+  origin: [
+    "http://localhost:5173",
+    "https://connectifyfrontend-3gra.onrender.com",
+  ],
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+};
+
+app.use(cors(corsOptions));
+app.options("*", cors(corsOptions));
+
+// -------------------- Middleware -------------------- //
+
+app.use(express.json({ limit: "40kb" }));
+app.use(express.urlencoded({ extended: true, limit: "40kb" }));
+
+// -------------------- Sessions -------------------- //
+
+app.use(
+  session({
+    secret: process.env.JWT_SECRET,
+    resave: false,
+    saveUninitialized: false,
+
+    cookie: {
+      secure: process.env.NODE_ENV === "production",
+      httpOnly: true,
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      maxAge: 1000 * 60 * 60 * 24, // 1 day
+    },
+  }),
+);
+
+// -------------------- Passport -------------------- //
 
 app.use(passport.initialize());
 app.use(passport.session());
 
+// -------------------- Routes -------------------- //
+
+app.get("/", (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: "Connectify Backend is running 🚀",
+  });
+});
+
 app.use("/api/v1/users", userRoutes);
+
+// -------------------- Database -------------------- //
 
 const start = async () => {
   try {
-    const connectionDb = await mongoose.connect(process.env.MONGO_URI);
+    if (!process.env.MONGO_URI) {
+      throw new Error("MONGO_URI is missing.");
+    }
 
-    console.log(`MongoDB Connected: ${connectionDb.connection.host}`);
+    if (!process.env.JWT_SECRET) {
+      throw new Error("JWT_SECRET is missing.");
+    }
+
+    const connection = await mongoose.connect(process.env.MONGO_URI);
+
+    console.log(`✅ MongoDB Connected: ${connection.connection.host}`);
 
     server.listen(app.get("port"), "0.0.0.0", () => {
-      console.log(`Server running on port ${app.get("port")}`);
+      console.log(`🚀 Server running on port ${app.get("port")}`);
     });
-
-  } catch (error) {
-    console.error("Database connection failed:", error);
+  } catch (err) {
+    console.error("❌ Startup Error:");
+    console.error(err.message);
     process.exit(1);
   }
 };
