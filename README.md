@@ -1,145 +1,304 @@
-# Connectify 🎥
+<h1 align="center">
+🎥 Connectify
+</h1>
 
-**Connectify** is a real-time video conferencing application inspired by Zoom and Google Meet.
-It allows users to create and join video meetings, communicate in real time, and collaborate seamlessly.
+<p align="center">
+A modern real-time video conferencing platform built with the <strong>MERN Stack</strong>, <strong>WebRTC</strong>, and <strong>Socket.IO</strong>.
+</p>
 
-This project is built using the **MERN stack** and **WebRTC** to provide real-time peer-to-peer video communication.
+<p align="center">
+
+<a href="https://connectifyfrontend-3gra.onrender.com/">
+<img src="https://img.shields.io/badge/🚀 Live Demo-Visit-success?style=for-the-badge" />
+</a>
+
+<a href="https://github.com/khushi1119/Connectify">
+<img src="https://img.shields.io/badge/Source Code-GitHub-black?style=for-the-badge&logo=github" />
+</a>
+
+<img src="https://img.shields.io/github/stars/khushi1119/Connectify?style=for-the-badge" />
+
+<img src="https://img.shields.io/github/forks/khushi1119/Connectify?style=for-the-badge" />
+
+<img src="https://img.shields.io/github/license/khushi1119/Connectify?style=for-the-badge" />
+
+</p>
 
 ---
 
-## 🚀 Features
+# 📖 About The Project
 
-- Real-time video calling using **WebRTC**
-- Create and join meeting rooms
-- Multiple participant support
-- Camera and microphone toggle
-- Secure backend APIs
-- Real-time signaling using **Socket.IO**
-- MongoDB database integration
-- Responsive UI
+Connectify is a **full-stack video conferencing platform** inspired by modern communication tools like **Zoom** and **Google Meet**.
+
+It enables users to create secure meeting rooms, join video calls, and communicate in real time using **WebRTC** for peer-to-peer media streaming and **Socket.IO** for signaling.
+
+The application follows the **MERN Stack architecture**, providing a scalable backend with Express.js and MongoDB while delivering a responsive and interactive frontend using React.js.
 
 ---
 
-## 🛠 Tech Stack
+# 🌐 Live Demo
 
-### Frontend
+### 🚀 Experience Connectify
+
+👉 **https://connectifyfrontend-3gra.onrender.com/**
+
+> **Note**
+>
+> Since the application is hosted on **Render's Free Tier**, the first request may take **30–60 seconds** while the server wakes up.
+
+---
+
+# ✨ Features
+
+- 🎥 Real-time HD Video Calling
+- 👥 Create & Join Meeting Rooms
+- ⚡ Peer-to-Peer Communication using WebRTC
+- 🔌 Real-time Signaling with Socket.IO
+- 🎙️ Camera Toggle
+- 🎤 Microphone Toggle
+- 🔒 Secure Backend APIs
+- 🍃 MongoDB Integration
+- 📱 Fully Responsive UI
+- 🌐 Cross Browser Support
+
+---
+
+# 🛠 Tech Stack
+
+## Frontend
 
 - React.js
 - JavaScript
-- CSS / Tailwind
+- Tailwind CSS
+- CSS3
 
-### Backend
+---
+
+## Backend
 
 - Node.js
 - Express.js
 - Socket.IO
 
-### Database
+---
+
+## Database
 
 - MongoDB Atlas
 - Mongoose
 
-### Real-time Communication
+---
+
+## Real-Time Communication
 
 - WebRTC
 - Socket.IO
 
 ---
 
-## 📁 Project Structure
+## Deployment
 
+- Render
+- MongoDB Atlas
+
+---
+
+# 📂 Project Structure
+
+```text
 Connectify
 │
 ├── backend
-│ ├── src
-│ │ ├── controllers
-│ │ ├── models
-│ │ ├── routes
-│ │ └── app.js
-│ ├── package.json
-│ └── .env
+│   ├── src
+│   │   ├── controllers
+│   │   ├── models
+│   │   ├── routes
+│   │   ├── middleware
+│   │   └── app.js
+│   │
+│   ├── package.json
+│   └── .env
 │
 ├── frontend
-│ ├── src
-│ └── package.json
+│   ├── public
+│   ├── src
+│   ├── package.json
+│   └── vite.config.js
 │
-├── .env.example
 ├── .gitignore
+├── .env.example
 └── README.md
+```
 
 ---
 
-## ⚙️ Installation & Setup
+# ⚙️ Installation
 
-### 2️⃣ Install backend dependencies
+## 1️⃣ Clone the Repository
 
+```bash
+git clone https://github.com/khushi1119/Connectify.git
+```
+
+---
+
+## 2️⃣ Navigate to the Project
+
+```bash
+cd Connectify
+```
+
+---
+
+## 3️⃣ Install Backend Dependencies
+
+```bash
 cd backend
 npm install
+```
 
 ---
 
-### 3️⃣ Install frontend dependencies
+## 4️⃣ Install Frontend Dependencies
 
+```bash
 cd ../frontend
 npm install
+```
 
 ---
 
-## 🔐 Environment Variables
+# 🔐 Environment Variables
 
-Create a **`.env` file inside the backend folder** and add the following variables:
+Create a **.env** file inside the backend directory.
 
+```env
 PORT=8000
+
 MONGO_URI=your_mongodb_connection_string
+
 JWT_SECRET=your_secret_key
+
 CLIENT_URL=http://localhost:3000
+```
 
-You can refer to **`.env.example`** for required environment variables.
+You can also refer to the provided **`.env.example`** file.
 
 ---
 
-## ▶️ Running the Application
+# ▶️ Running the Application
 
-### Start Backend Server
+## Start Backend
 
+```bash
 cd backend
+
 npm run dev
+```
 
-### Start Frontend
+Backend will run on
 
-cd frontend
-npm start
-
-Backend runs on:
-
+```text
 http://localhost:8000
-
-Frontend runs on:
-
-http://localhost:3000
+```
 
 ---
 
-## 🌐 Future Improvements
+## Start Frontend
 
-Planned features to improve the platform:
+```bash
+cd frontend
 
-- Screen sharing
-- Meeting chat
-- Meeting recording
-- Authentication system
-- Meeting history dashboard
-- Scheduling meetings
-- Deployment (Vercel + Render)
+npm run dev
+```
 
-## 👩‍💻 Author
+Frontend will run on
 
-**Khushi Tiwari**
-
-AI & Machine Learning Student | Full Stack Developer
+```text
+http://localhost:5173
+```
 
 ---
 
-## ⭐ Support
+---
 
-If you like this project, consider giving it a **star on GitHub** ⭐
+# 🚀 Roadmap
+
+Upcoming Features
+
+- 📺 Screen Sharing
+- 💬 Real-time Chat
+- 🎥 Meeting Recording
+- 🔐 User Authentication
+- 📅 Meeting Scheduling
+- 📜 Meeting History
+- 👨‍💼 User Dashboard
+- 🌍 TURN Server Integration
+- ☁️ Docker Deployment
+- ☸ Kubernetes Deployment
+
+---
+
+# 🤝 Contributing
+
+Contributions are welcome!
+
+1. Fork the repository.
+
+2. Create a feature branch.
+
+```bash
+git checkout -b feature/NewFeature
+```
+
+3. Commit your changes.
+
+```bash
+git commit -m "Add new feature"
+```
+
+4. Push the branch.
+
+```bash
+git push origin feature/NewFeature
+```
+
+5. Open a Pull Request.
+
+---
+
+# 👩‍💻 Author
+
+### Khushi Tiwari
+
+**Full Stack MERN Developer**
+
+📧 Email
+
+tiwari.khushi1119@gmail.com
+
+💼 LinkedIn
+
+https://www.linkedin.com/in/khushi-tiwari-881539334/
+
+🐙 GitHub
+
+https://github.com/khushi1119
+
+---
+
+# ⭐ Show Your Support
+
+If you found this project helpful,
+
+⭐ **please consider giving it a star on GitHub!**
+
+It motivates me to build more open-source projects.
+
+---
+
+<p align="center">
+
+Made with ❤️ by <strong>Khushi Tiwari</strong>
+
+</p>
